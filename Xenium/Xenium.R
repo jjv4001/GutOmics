@@ -278,7 +278,7 @@ DotPlot(
   features=features)+RotatedAxis()
 epithelial<-merge2
 cropped.coords <- Crop(merge2[["fov1"]], x = c(2000, 3500), y = c(2000, 2750), coords = "plot")
-cropped.coords1 <- Crop(epithelial[["fov4"]], x = c(2150, 2750), y = c(1000, 1800), coords = "plot")
+cropped.coords1 <- Crop(epithelial[["fov4"]], x = c(2150, 3100), y = c(800, 1800), coords = "plot")
 merge2[["zoom"]] <- cropped.coords
 epithelial[["zoom"]] <- cropped.coords1
 # visualize cropped area with cell segmentations & selected molecules
