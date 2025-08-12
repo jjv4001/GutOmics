@@ -239,3 +239,108 @@ linked_da_genes <- subset(peak_gene_links, peak %in% da_peak_names)
 unique_da_genes <- unique(linked_da_genes$gene_symbol)
 
 write.csv(linked_da_genes, "/athena/chenlab/scratch/jjv4001/gutrevision/olddata/DA_Peak_Gene_Links_SI.csv", row.names = FALSE)
+
+
+#Motifenrichment
+
+library(BSgenome.Hsapiens.UCSC.hg38) # Replace with the correct BSgenome package for your organism/build
+main.chroms <- standardChromosomes(BSgenome.Hsapiens.UCSC.hg38)
+keep.peaks <- as.logical(seqnames(granges(epithelial)) %in% main.chroms) # object is your input data
+epithelial <- epithelial[keep.peaks, ]
+#create rownames with da_peaks
+rownames(da_peaks)<-da_peaks$X
+#remove column $X
+da_peaks$X<-NULL
+#subset goblet cells
+gc<-subset(da_peaks, cluster=="Goblet cells")
+#find enriched motifs
+top.da.peak <- rownames(gc[gc$p_val < 0.005 & gc$pct.1 > 0.2, ])
+enriched.motifs <- FindMotifs(
+  object = epithelial,
+  features = top.da.peak
+)
+#save data
+write.csv(enriched.motifs,"/athena/chenlab/scratch/jjv4001/gutrevision/olddata/gcmotifanalysisnew.csv")
+#subset stem cells
+sc<-subset(da_peaks, cluster=="Stem cells + progenitors")
+#find enriched motifs
+top.da.peak <- rownames(sc[sc$p_val < 0.005 & sc$pct.1 > 0.2, ])
+enriched.motifs <- FindMotifs(
+  object = epithelial,
+  features = top.da.peak
+)
+#save data
+write.csv(enriched.motifs,"/athena/chenlab/scratch/jjv4001/gutrevision/olddata/stemcellmotifanalysisnew.csv")
+
+#subset Enterocytes
+Enterocytes<-subset(da_peaks, cluster=="Enterocytes")
+#find enriched motifs
+top.da.peak <- rownames(Enterocytes[Enterocytes$p_val < 0.005 & Enterocytes$pct.1 > 0.2, ])
+enriched.motifs <- FindMotifs(
+  object = epithelial,
+  features = top.da.peak
+)
+#save data
+write.csv(enriched.motifs,"/athena/chenlab/scratch/jjv4001/gutrevision/olddata/enterocytesmotifanalysisnew.csv")
+
+#subset Enteroendocrine cells
+eecs<-subset(da_peaks, cluster=="EECs")
+#find enriched motifs
+top.da.peak <- rownames(eecs[eecs$p_val < 0.005 & eecs$pct.1 > 0.2, ])
+enriched.motifs <- FindMotifs(
+  object = epithelial,
+  features = top.da.peak
+)
+#save data
+write.csv(enriched.motifs,"/athena/chenlab/scratch/jjv4001/gutrevision/olddata/eecsmotifanalysisnew.csv")
+#read all enriched motifs and extract top unique 25 motifs 
+df1<-read.csv("/athena/chenlab/scratch/jjv4001/gutrevision/olddata/stemcellmotifanalysisnew.csv")
+df2<-read.csv("/athena/chenlab/scratch/jjv4001/gutrevision/olddata/enterocytesmotifanalysisnew.csv")
+df3<-read.csv("/athena/chenlab/scratch/jjv4001/gutrevision/olddata/gcmotifanalysisnew.csv")
+df4<-read.csv("/athena/chenlab/scratch/jjv4001/gutrevision/olddata/eecsmotifanalysisnew.csv")
+top25_df1 <- df1 %>% arrange(desc(fold.enrichment)) %>% slice_head(n = 25)
+top25_df2 <- df2 %>% arrange(desc(fold.enrichment)) %>% slice_head(n = 25)
+top25_df3 <- df3 %>% arrange(desc(fold.enrichment)) %>% slice_head(n = 25)
+top25_df4 <- df4 %>% arrange(desc(fold.enrichment)) %>% slice_head(n = 25)
+all_top_motifs <- unique(c(
+  top25_df1$motif.name,
+  top25_df2$motif.name,
+  top25_df3$motif.name,
+  top25_df4$motif.name
+))
+
+get_fold_matrix <- function(df, sample_name) {
+  df %>%
+    filter(motif.name %in% all_top_motifs) %>%
+    select(motif.name, fold.enrichment) %>%
+    rename(!!sample_name := fold.enrichment)
+}
+
+m1 <- get_fold_matrix(df1, "Stem cells")
+m2 <- get_fold_matrix(df2, "Enterocytes")
+m3 <- get_fold_matrix(df3, "Goblet cells")
+m4 <- get_fold_matrix(df4, "EECs")
+
+# Combine all motifs 
+library(purrr)  # for reduce
+heatmap_df <- reduce(list(m1, m2, m3, m4), full_join, by = "motif.name")
+heatmap_df[is.na(heatmap_df)] <- 0  # Optional: fill NAs with 0
+
+# Convert to matrix
+mat <- as.matrix(heatmap_df[,-1])
+rownames(mat) <- heatmap_df$motif
+fracMat<-mat
+
+#Visualize
+ComplexHeatmap::pheatmap(
+  fracMat,
+  color = viridis(100, option = "magma", direction=-1),
+  name = "Fold Change",
+  cluster_rows = FALSE,
+  cluster_cols = FALSE,
+  show_rownames = TRUE,
+  show_colnames = TRUE,
+  fontsize = 10,
+  cellheight = 9,
+  cellwidth = 40
+)
