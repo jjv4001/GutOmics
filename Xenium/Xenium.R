@@ -1,19 +1,24 @@
+#Merge tissues from different sections of fetal samples of different weeks post-conception
 Week20<-merge(Reg1, Reg4)
 Week17<-merge(Reg6, Reg9)
+#Merge all sections
 merge2<-merge(Week17, Week20)
 
-
+#Load Seurat
 library(Seurat)
+#normalize data and perform linear and non-linear dimensional reduction
 merge2 <- SCTransform(merge2, assay = "Xenium")
 merge2 <- RunPCA(merge2, npcs = 30, features = rownames(merge2))
 merge2 <- RunUMAP(merge2, dims = 1:30, reduction="pca")
+#Find clusters 
 merge2 <- FindNeighbors(merge2, dims = 1:30)
+#Perform integration using harmony and perform non-linear dimensional reduction, cell clustering
 merge2 <- RunHarmony(object = merge2, group.by.vars = 'sample')
 merge2 <- RunUMAP(merge2, dims = 1:30, reduction="harmony")
 merge2 <- FindNeighbors(merge2, dims = 1:30)
 merge2 <- FindClusters(merge2, resolution = 4.15)
 
-
+#assign cell identities
 new.cluster.ids <- c("Enterocytes","Enterocytes", "2","Enterocytes", "4", "5",
                      "6", "7", "8", "9", "10",
                      "Enterocytes","12", "13", "14", "15", "16",
@@ -268,31 +273,33 @@ new.cluster.ids <- c("Enterocytes",
                      "Enterocytes")
 names(new.cluster.ids) <- levels(merge2)
 merge2 <- RenameIdents(merge2, new.cluster.ids)
+
+#assign features for visualization
 features<-c("CHGA","RAP1GAP2","RIMBP2",
             "RBP2","APOA1","APOC3","KHK",
             "LGR5","ASCL2","RGMB","PREP",
             "CLCA1","MUC2","TCEA3","ATOH1",
             "NUSAP1","TOP2A","UBE2C")
+#visualization
 DotPlot(
   merge2,
   features=features)+RotatedAxis()
+#Create a second seurat object 
 epithelial<-merge2
+# zoom in on a chosen area with the Crop() function
 cropped.coords <- Crop(merge2[["fov1"]], x = c(2000, 3500), y = c(2000, 2750), coords = "plot")
 cropped.coords1 <- Crop(epithelial[["fov4"]], x = c(2150, 3100), y = c(800, 1800), coords = "plot")
 merge2[["zoom"]] <- cropped.coords
 epithelial[["zoom"]] <- cropped.coords1
-# visualize cropped area with cell segmentations & selected molecules
+# visualize cropped area with cell segmentations & selected molecules, saving plot
 DefaultBoundary(merge2[["zoom"]]) <- "segmentation"
 DefaultBoundary(epithelial[["zoom"]]) <- "segmentation"
 options(future.globals.maxSize = 8000 * 1024^2)
 custom_colors <- c("#FFCC99", "#FF99FF", "#99CCFF", "#99FFCC", "#FF6666")
 ImageDimPlot(merge2, fov = "zoom", axes = TRUE, border.color = "NA", border.size = 0.1, cols = custom_colors,dark.background = FALSE,coord.fixed = FALSE, nmols = 10000, flip_xy = TRUE)
 ImageFeaturePlot(merge2,fov ="zoom",features = c("RBP2"), size = 2, cols = c("blue", "red"), min.cutoff = c("1"), max.cutoff=c("4"), dark.background = FALSE)
-
 features<-c("APOA4","APOB","AADAC","AFP","CCL25","CPVL","CPS1","ALDOB","ADCY2","CYP2W1","CD68","APOE","AIG1","ARID3A","ALDH1A1","ACE2","CDKN1C","CHST9","CTSH","DAB1","ADGRG7","ATRN","ATP11A","BDH2")
-
 p1<-ImageFeaturePlot(merge2,fov ="zoom",features = c("AFP"),max.cutoff =2,  size = 2, cols = c("grey", "#ff6699"), dark.background = FALSE, border.color = NA)
-
 p2<-ImageFeaturePlot(epithelial,fov ="zoom",features = c("AFP"),max.cutoff =2,  size = 2, cols = c("grey", "#99ccff"), dark.background = FALSE, border.color = NA)
 
 pdf(paste(".pdf", sep=""), width=32, height=24)
@@ -309,24 +316,28 @@ for (gene in features) {
   )
 }
 
+#save Seurat object with all the Xenium data
 saveRDS(merge2, "/Users/chenlab/scratch/jjv4001/16445-selected/xeniumepithelialfinal.rds")
 
+#subset the enteroendocrine cells from the Seurat object
 EECs<-subset(merge2, idents="EECs")
-
+#normalize data and perform linear and non-linear dimensional reduction
 EECs <- SCTransform(EECs, assay = "Xenium")
 EECs <- RunPCA(EECs, npcs = 30, features = rownames(EECs))
 EECs <- RunUMAP(EECs, dims = 1:30, reduction="pca")
+#Cluster cells
 EECs <- FindNeighbors(EECs, dims = 1:30)
 EECs <- FindClusters(EECs, resolution = 1.0)
+#visualize features of EEC cells
 features<-c("GIP","PYY","TPH1","SST","CCK")
 DotPlot(EECs, features=features)
-
+#assign cell identities
 new.cluster.ids <- c("EC cells", "EEC Progenitors","EC cells","EC cells","EC cells",
                      "K cells","EC cells","I cells","EC cells","D cells","D cells",
                      "EC cells", "EC cells","EC cells","K cells","EC cells","L cells")
-
 names(new.cluster.ids) <- levels(EECs)
 EECs <- RenameIdents(EECs, new.cluster.ids)
+#Assign the respective intestinal regions to each FOV
 EECs$tissue <- EECs$sample
 EECs$tissue[EECs$tissue == "Reg1"] <- "Duodenum"
 EECs$tissue[EECs$tissue == "Reg4"] <- "Colon"
@@ -334,11 +345,11 @@ EECs$tissue[EECs$tissue == "Reg6"] <- "Duodenum"
 EECs$tissue[EECs$tissue == "Reg9"] <- "Colon"
 EECs$identity<-EECs@active.ident
 EECs$celltype<-paste0(EECs$identity, EECs$tissue)
-
+#assign cell identities
 new.cluster.ids <- c("D cells", "EC cells","I cells","K cells","EEC Progenitors",
                      "L cells","EC cells","D cells","EEC Progenitors","L cells","EC cells",
                      "L cells")
 names(new.cluster.ids) <- levels(EECs)
 EECs <- RenameIdents(EECs, new.cluster.ids)
-
+#save Seurat object
 saveRDS(merge2, "/Users/chenlab/scratch/jjv4001/16445-selected/eecfinal.rds")
