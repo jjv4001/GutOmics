@@ -78,6 +78,7 @@ merged.gut$Cell_Type <- as.character(merged.gut@active.ident)
 pdf(paste("PMID33278341_umap_cluster_iter_6.pdf", sep=""))
 DimPlot(merged.gut, reduction="umap", label=TRUE)
 dev.off()
-
+# subset Epithelial cells
 merged.gut<-subset(merged.gut, idents="Epithelial")
+# save Seurat analysis
 saveRDS(merged.gut, file=paste("PMID33278341_iter_2_seurat.rds", sep=""))
