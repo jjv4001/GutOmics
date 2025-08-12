@@ -1,10 +1,8 @@
-
+#Load Seurat
 library(Seurat)
-
+# PMID of the dataset
 id <- "PMID31753849"
 message(paste("sample:", id))
-
-# PMID of the dataset
 #Load the respective matrix files for run and merge the matrices
 dirs <- dir(path="./", pattern="run_count")
 seurat <- lapply(dirs, function(dir){
