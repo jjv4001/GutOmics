@@ -1,7 +1,7 @@
 #Load Seurat
 library(Seurat)
 
-# Specify markers
+# Specify markers for visualization
 genes <- c("EPCAM", "CDX2","COL1A1","COL6A1","TUBB2B", 
            "ELAVL4","HBA1","HBB","PECAM1","GSN",
            "CCL3","CD74")
