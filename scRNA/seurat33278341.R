@@ -70,7 +70,7 @@ merged.gut<-readRDS("/home/fs01/jjv4001/PMID33278341_iter_1_seurat.rds")
 
 # cluster cells
 merged.gut <- FindClusters(merged.gut, resolution=0.15)
-# assign cluster identitied
+# assign cluster identities
 cells <- structure(c("Mesenchymal", "Epithelial", "Epithelial", "Epithelial", "Epithelial", "Mesenchymal","Immune cells","Immune cells","Epithelial","Neuronal","Endothelial","Epithelial","RBCs"), names=levels(merged.gut))
 merged.gut <- RenameIdents(merged.gut, cells)
 merged.gut$Cell_Type <- as.character(merged.gut@active.ident)
