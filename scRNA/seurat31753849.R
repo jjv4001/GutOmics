@@ -37,6 +37,7 @@ for (resolution in seq(0, 1, 0.05)){
   print(g)}
 dev.off()
 
+#visualization
 pdf(paste(id, "_umap_QC_iter_1.pdf", sep=""), width=9, height=8)
 FeaturePlot(seurat, features=c("nFeature_RNA", "nCount_RNA", "percent.mt"), raster=TRUE)
 dev.off()
@@ -48,10 +49,10 @@ dev.off()
 pdf(paste(id, "_umap_group_iter_1.pdf", sep=""))
 DimPlot(seurat, reduction="umap", group.by="orig.ident", label=TRUE, raster=TRUE)
 dev.off()
-visualization
 
-saveRDS(seurat, file=paste(id, "_iter_1_seurat.rds", sep=""))
 # save Seurat analysis
+saveRDS(seurat, file=paste(id, "_iter_1_seurat.rds", sep=""))
+
 
 ####################################################
 ##########          iteration #1          ##########
