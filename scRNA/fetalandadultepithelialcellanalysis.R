@@ -4,7 +4,7 @@ library(readxl)
 #Load age-assigned metadata
 metadata<-read_xlsx("/athena/chenlab/scratch/jjv4001/gutrevision/metadata.xlsx")
 #Load epithelial data corresponding to both adult and fetal samples
-all<-readRDS("/athena/chenlab/scratch/jjv4001/gutrevision/")
+all<-readRDS("/athena/chenlab/scratch/jjv4001/gutrevision/assignedintegrated.RDS")
 #Assign metadata to the dataset
 all$SampleType<-metadata$SampleType
 #subset fetal samples
