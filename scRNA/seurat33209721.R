@@ -66,19 +66,27 @@ saveRDS(seurat, file=paste(id, "_iter_1_seurat.rds", sep=""))
 ##########          iteration #1          ##########
 ####################################################
 
-
+# Load saved Seurat analysis
 merged.gut<-readRDS("/home/fs01/jjv4001/PMID33290721_iter_1_seurat.rds")
+
+# cluster cells
 merged.gut <- FindClusters(merged.gut, resolution=0.65)
+# assign cluster identitied
 cells <- structure(c("Mesenchymal", "Epithelial", "Epithelial", "Mesenchymal", "Immune cells", "Epithelial","Mesenchymal","Mesenchymal","Neuronal","Epithelial","Mesenchymal","Epithelial","Immune cells","Epithelial","Mesenchymal","Endothelial","Epithelial","Neuronal","Mesenchymal","Immune cells","Epithelial","Epithelial","Mesenchymal","RBCs","Endothelial","Immune cells","Mesenchymal","Epithelial","Epithelial"), names=levels(merged.gut))
 merged.gut <- RenameIdents(merged.gut, cells)
 merged.gut$Cell_Type <- as.character(merged.gut@active.ident)
+
+#umap visualization
 pdf(paste("PMID33290721_umap_cluster_iter_2.pdf", sep=""))
 DimPlot(merged.gut, reduction="umap", label=TRUE)
 dev.off()
-# clustering analysis
+
+# subset Epithelial cells
 merged.gut<-subset(merged.gut, idents="Epithelial")
-saveRDS(merged.gut, file=paste("PMID33290721_integrated_iter_2_seurat.rds", sep=""))
+
 # save Seurat analysis
+saveRDS(merged.gut, file=paste("PMID33290721_integrated_iter_2_seurat.rds", sep=""))
+
 ####################################################
 ##########          iteration #2          ##########
 ####################################################
