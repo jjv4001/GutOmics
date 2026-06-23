@@ -11,7 +11,7 @@ run_cell_type_individual.sh, step1.sh, step2.sh, summary.sh provide codes for GW
 seurat33209721.R, seurat33406409.R, seurat34497389.R, seurat33278341.R, seurat31753849.R, and seurat35176508.R provide codes for initial processing and Seurat analysis of scRNA data from fetal and adult human intestinal samples. 
 Cell types from different germ layers are assigned and epithelial cells which are of interest are subset. 
 dataintegration.R integrates epithelial cells from multiple scRNA datasets and assigns different epithelial cell type identities. 
-EEC.R is used to subset enteroendocrine cells from the epithelial cell population and assign enteroendocrine subtypes. 
+EEC.R is used to subset enteroendocrine cells from the epithelial cell population and assign enteroendocrine subtypes. fetal + adult epithelial cell analysis.R provides the updated code for subsetting samples corressponding to fetal developmental timepoints of interest and reanalysis as well as separate analysis of the scRNA-seq data corresponding to adult samples. fetal epithelial + eecs cell analysis.R provides the updated code for the assignment of epithelial and enteroendocrine cell types in the fetal samples corresponding to developmental timepoints of interest (11-17 weeks PCW).  
 
 ## snATAC
 
