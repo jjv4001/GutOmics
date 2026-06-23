@@ -17,7 +17,7 @@ EEC.R is used to subset enteroendocrine cells from the epithelial cell populatio
 
 ATAC.R generates a unified set of peaks across all fetal intestinal samples from different regions including the foregut (duodenum), midgut (jejunum), hindgut (ileum), and colon using the reduce function, 
 creates Seurat objects with chromatin assays, assigns cells originating from different germ layers, and identifies different epithelial cell types based on open chromatin accessibility peaks of characteristic 
-genetic markers.
+genetic markers. ciceroanalysis-allcells.R, cicero and motif enrichment analysis.R, cicero and motif enrichment analysis-epithelial cells.R and cicero analysis-epithelial cells-v1.R provide codes for the cicero and motif enrichment analysis of all cell types as well as epithelial cell types. obtain_bed_peaks.R provides codes for obtaining the bed file for peaks from snATAC-seq data.
 
 ## Xenium
 
