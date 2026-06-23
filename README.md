@@ -1,5 +1,11 @@
 # GutOmics
 
+## Bulk RNA-seq
+K_cell_module_score.R provides codes for calculating gene module score for relevant genes of interest from bulk RNA-seq data for hPSC-derived intestinal organoids treated with different small molecules.
+
+##GWAS 
+run_cell_type_individual.sh, step1.sh, step2.sh, summary.sh provide codes for GWAS analysis of the epithelial clusters detected in the snATAC-seq data to datasets from previous literature to understand their genetic correlation to metabolic disorders. plot_ldsc_results.ipynb and GWAS_code_plot.R provide codes for plotting the GWAS results. 
+
 ## scRNA
 
 seurat33209721.R, seurat33406409.R, seurat34497389.R, seurat33278341.R, seurat31753849.R, and seurat35176508.R provide codes for initial processing and Seurat analysis of scRNA data from fetal and adult human intestinal samples. 
