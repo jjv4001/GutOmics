@@ -724,5 +724,18 @@ new.cluster.ids <- c("Enterocytes","Enterocytes","Stem cells","Enterocytes","Ent
 names(new.cluster.ids) <- levels(Epithelial)
 Epithelial <- RenameIdents(Epithelial, new.cluster.ids)
 
+#Generation of Plots
+DimPlot(Epithelial, reduction = "umap") +
+  theme_bw(base_size = 16) +
+  theme(
+    panel.border = element_rect(color = "black", fill = NA, size = 1),
+    panel.grid.major = element_blank(),   # Remove major grid lines
+    panel.grid.minor = element_blank(),   # Remove minor grid lines
+    axis.text = element_text(size = 20),
+    axis.title = element_text(size = 20),
+    legend.text = element_text(size = 20),
+    legend.title = element_text(size = 20)
+  )+labs(x = "UMAP_1", y = "UMAP_2")
+
 
 
