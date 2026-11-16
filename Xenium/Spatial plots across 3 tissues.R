@@ -16,7 +16,7 @@ outdir <- "spatial_gene_panels"
 dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
 
 #Specify genes for plotting 
-genes_use <- features$rownames.features.   # your 422 genes
+genes_use <- features$rownames.features.   # your 422 genes or a specific genes
 
 # =========================================================
 # CROP COORDINATES
@@ -31,8 +31,8 @@ col_x <- c(3500, 6000)
 col_y <- c(2500, 5000)
 
 #Specify colors 
-duo_col <- "blue"
-mid_col <- "blue"
+duo_col <- "red"
+mid_col <- "red"
 col_col <- "red"
 
 # =========================================================
