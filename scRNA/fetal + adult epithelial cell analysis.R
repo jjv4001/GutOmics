@@ -4,7 +4,7 @@ library(readxl)
 #Load age-assigned metadata
 metadata<-read_xlsx("/athena/chenlab/scratch/jjv4001/gutrevision/metadata.xlsx")
 #Load epithelial data corresponding to both adult and fetal samples
-all<-readRDS("/athena/chenlab/scratch/jjv4001/gutrevision/")
+all<-readRDS("/athena/chenlab/scratch/jjv4001/gutrevision/assignedintegrated.RDS")
 #Assign metadata to the dataset
 all$SampleType<-metadata$SampleType
 #subset fetal samples
@@ -30,7 +30,7 @@ ElbowPlot(fetalcorrected)
 fetalcorrected <- FindNeighbors(fetalcorrected, dims = 1:15)
 fetalcorrected <- FindClusters(fetalcorrected, resolution = 3.5)
 #choose features and visualize feature expression
-features<-c("LGR5","MYC","RGMB","TOP2A","UBE2C","FABP1","ANPEP","CLCA1","MUC2","CHGA","NEUROD1","LYZ","PRSS2","LYZ1")
+features<-c("LGR5","MYC","TOP2A","UBE2C","FABP1","SLC26A3","CLCA1","MUC2","CHGA","NEUROD1","LYZ","POU2F3","AVIL")
 DotPlot(fetalcorrected, features=features)+RotatedAxis()
 
 #assign fetal epithelial cells
@@ -47,12 +47,13 @@ new.cluster.ids <- c("Enterocytes","Enterocytes", "Enterocytes", "Enterocytes","
                      "Enterocytes","Enterocytes","Enteroendocrine cells","Stem cells","Enterocytes",
                      "Enterocytes","Enteroendocrine cells","Enteroendocrine cells","Enterocytes","Enterocytes",
                      "Enterocytes","Enterocytes","Enterocytes","Goblet cells","Enterocytes",
-                     "Goblet cells","Enterocytes","Enterocytes")
+                     "Goblet cells","Enterocytes","Tuft cells")
 
 names(new.cluster.ids) <- levels(fetalcorrected)
 fetalcorrected <- RenameIdents(fetalcorrected, new.cluster.ids)
 #change levels of fetal epithelial cells
-new_levels <- c("Paneth cells", "Enteroendocrine cells", "Goblet cells", "Enterocytes","TA cells","Stem cells")
+new_levels <- c("Tuft cells","Paneth cells", "Enteroendocrine cells", "Goblet cells", "Enterocytes","TA cells","Stem cells")
+new_levels <- c("Stem cells","TA cells","Enterocytes","Goblet cells","Enteroendocrine cells","Paneth cells","Tuft cells")
 Idents(fetalcorrected) <- factor(Idents(fetalcorrected), levels = new_levels)
 #Load viridis package
 library(viridis)
@@ -63,7 +64,7 @@ fetalcorrected$identity<-Idents(fetalcorrected)
 fetalcorrected$identity[fetalcorrected$identity == "Paneth cells" & fetalcorrected$region == "large intestine"] <- "Enterocytes"
 Idents(fetalcorrected)<-fetalcorrected$identity
 #Visualize dotplot with markers
-DotPlot(fetalcorrected, features=features, dot.scale=20)+RotatedAxis()+scale_color_viridis_c(option = "A")
+DotPlot(fetalcorrected, features=features, dot.scale=10)+RotatedAxis()+scale_color_viridis_c(option = "A", direction=-1)
 #Visualize umap of epithelial cells
 DimPlot(fetalcorrected, reduction = "umap.integrated", group.by="Age") +
   scale_color_viridis_d(option = "B") +
@@ -130,25 +131,25 @@ adult <- RunPCA(adult, features = VariableFeatures(object = adult))
 adult <- FindNeighbors(adult, dims = 1:15)
 adult <- FindClusters(adult, resolution = 1.0)
 #choose features and visualize feature expression
-features<-c("LGR5","MYC","RGMB","TOP2A","UBE2C","ALPI","FABP1","CLCA1","MUC2","SPINK4","CHGA","NEUROD1","INSM1","LYZ","DEFA5","DEFA6")
+features<-c("LGR5","MYC","RGMB","TOP2A","UBE2C","FABP1","SLC26A3","CLCA1","MUC2","SPINK4","CHGA","NEUROD1","INSM1","LYZ","DEFA5","DEFA6","POU2F3","AVIL")
 #Visualize dotplot with markers
 DotPlot(adult, features=features, dot.scale=20)+RotatedAxis()+scale_color_viridis_c(option = "A", direction=-1)
 #assign adult epithelial cells
 new.cluster.ids <- c("Enterocytes","Stem cells","Enterocytes","Stem cells","Enterocytes","Enterocytes",
                      "Enterocytes","Goblet cells","Enterocytes","Stem cells","Enterocytes",
-                     "Enterocytes","Paneth cells","Enterocytes","Enterocytes","Enterocytes",
+                     "Enterocytes","Paneth cells","Enterocytes","Enterocytes","Tuft cells",
                      "Goblet cells","TA cells","TA cells","Stem cells","Goblet cells",
                      "Enterocytes","Enterocytes","Enterocytes","Enterocytes","Enterocytes",
                      "Goblet cells","Enterocytes","Enterocytes","Enterocytes","Goblet cells",
                      "Enterocytes","Enterocytes","TA cells","Goblet cells","Stem cells",
-                     "Enterocytes","EECs","Goblet cells","Enterocytes","Enterocytes",
+                     "Enterocytes","EECs","Goblet cells","Enterocytes","Tuft cells",
                      "Enterocytes","Goblet cells","Enterocytes","Enterocytes","Goblet cells",
                      "Enterocytes","Paneth cells","Goblet cells","Enterocytes")
 names(new.cluster.ids) <- levels(adult)
 adult <- RenameIdents(adult, new.cluster.ids)
-new_levels <- c("Stem cells","TA cells","Enterocytes","Goblet cells","EECs","Paneth cells")
+new_levels <- c("Stem cells","TA cells","Enterocytes","Goblet cells","EECs","Paneth cells","Tuft cells")
 Idents(adult) <- factor(Idents(adult), levels = new_levels)
-new_levels <- c("Paneth cells","EECs","Goblet cells","Enterocytes","TA cells","Stem cells")
+new_levels <- c("Tuft cells","Paneth cells","EECs","Goblet cells","Enterocytes","TA cells","Stem cells")
 Idents(adult) <- factor(Idents(adult), levels = new_levels)
 new_levels <- c("25 to 30 years","45 to 50 years","50 to 55 years","60 to 65 years","65 to 70 years", "70 to 75 years")
 Idents(adult) <- factor(Idents(adult), levels = new_levels)

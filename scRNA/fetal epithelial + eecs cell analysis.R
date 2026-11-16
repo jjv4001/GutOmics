@@ -4,7 +4,7 @@ library(readxl)
 #Load age-assigned metadata
 metadata<-read_xlsx("/athena/chenlab/scratch/jjv4001/gutrevision/metadata.xlsx")
 #Load epithelial data corresponding to both adult and fetal samples
-all<-readRDS("/athena/chenlab/scratch/jjv4001/gutrevision/assignedintegrated.rds")
+all<-readRDS("/athena/chenlab/scratch/jjv4001/gutrevision/assignedintegrated.RDS")
 #Assign metadata to the dataset
 all$SampleType<-metadata$SampleType
 #subset fetal samples
@@ -45,17 +45,18 @@ new.cluster.ids <- c("Enterocytes","Enterocytes", "Enterocytes", "Enterocytes","
                      "Enterocytes","Enterocytes","Enteroendocrine cells","Stem cells","Enterocytes",
                      "Enterocytes","Enteroendocrine cells","Enteroendocrine cells","Enterocytes","Enterocytes",
                      "Enterocytes","Enterocytes","Enterocytes","Goblet cells","Enterocytes",
-                     "Goblet cells","Enterocytes","Enterocytes")
+                     "Goblet cells","Enterocytes","Tuft cells")
 
 names(new.cluster.ids) <- levels(fetalcorrected)
 fetalcorrected <- RenameIdents(fetalcorrected, new.cluster.ids)
 #change levels of fetal epithelial cells
-new_levels <- c("Paneth cells", "Enteroendocrine cells", "Goblet cells", "Enterocytes","TA cells","Stem cells")
+new_levels <- c("Tuft cells","Paneth cells", "Enteroendocrine cells", "Goblet cells", "Enterocytes","TA cells","Stem cells")
+new_levels <- c("Stem cells","TA cells","Enterocytes","Goblet cells","Enteroendocrine cells","Paneth cells","Tuft cells")
 Idents(fetalcorrected) <- factor(Idents(fetalcorrected), levels = new_levels)
 #Load viridis package
 library(viridis)
 #Visualize dotplot with markers
-DotPlot(fetalcorrected, features=features, dot.scale=20)+RotatedAxis()+scale_color_viridis_c(option = "A")
+DotPlot(fetalcorrected, features=features, dot.scale=10)+RotatedAxis()+scale_color_viridis_c(option = "A", direction=-1)
 #Assign Paneth cells in the large intestine to enterocytes
 fetalcorrected$identity<-Idents(fetalcorrected)
 fetalcorrected$identity[fetalcorrected$identity == "Paneth cells" & fetalcorrected$region == "large intestine"] <- "Enterocytes"
