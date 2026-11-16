@@ -28,7 +28,7 @@ ElbowPlot(fetalcorrected)
 fetalcorrected <- FindNeighbors(fetalcorrected, dims = 1:15)
 fetalcorrected <- FindClusters(fetalcorrected, resolution = 3.5)
 #choose features and visualize feature expression
-features<-c("LGR5","MYC","RGMB","TOP2A","UBE2C","FABP1","ANPEP","CLCA1","MUC2","CHGA","NEUROD1","LYZ","PRSS2","LYZ1")
+features<-c("LGR5","MYC","TOP2A","UBE2C","FABP1","SLC26A3","CLCA1","MUC2","CHGA","NEUROD1","LYZ")
 DotPlot(fetalcorrected, features=features)+RotatedAxis()
 
 #assign fetal epithelial cells
