@@ -240,3 +240,14 @@ linked_da_genes <- subset(peak_gene_links, peak %in% da_peak_names)
 unique_da_genes <- unique(linked_da_genes$gene_symbol)
 
 write.csv(linked_da_genes, "/athena/chenlab/scratch/jjv4001/gutrevision/olddata/DA_Peak_Gene_Links_SI.csv", row.names = FALSE)
+
+#Generation of plots
+library(viridis)
+library(ggplot2)
+DefaultAssay(epithelial)<-"RNA"
+features<-c("LGR5","MYC","RGMB","TOP2A","UBE2C","ALPI","FABP1","SLC26A3","CLCA1","MUC2","SPINK4","CHGA","NEUROD1","INSM1")
+DotPlot(epithelial, features=features, dot.scale=20)+RotatedAxis()+scale_color_viridis_c(option = "A", direction=-1)
+DefaultAssay(epithelial)<-"GeneActivity"
+DotPlot(epithelial, features=features, dot.scale=20)+RotatedAxis()+scale_color_viridis_c(option = "A", direction=-1)
+
+
